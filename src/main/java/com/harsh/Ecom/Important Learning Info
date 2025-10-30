@@ -1,0 +1,25 @@
+Controller and Service files regarding the fetching and adding to database of an image
+
+we use @RequestPart (two parts here in the case of pure data(text,numbers,boolean) and image(binary data))
+to divide the data into multiple parts to store, cause JSON can't store binary data efficiently
+it will use Base64 to encode the data to text and which will make it 30-40% more larger plus more
+CPU load.
+
+So we take the data into two parts(More clean code too)
+
+about the IOException error part in getBytes from the binary data of ImageFile
+
+so the thing is why I/O it's not like its reading a disk file directly, its till I/O
+it's reading the file stream from memory or temporary storage that spring uses to hold uploaded files
+and I/O operations are not guaranteed to succeed
+they can fail for many reasons like:
+Upload interruption mid-way
+file too large, server blocked it due to limit size
+temporary file before getBytes(),corrupted stream(bad data uploaded)
+
+now why not use a try and catch error in service because we are supposed to handle that in the controller
+why    because the controller layer is responsible for HTTP response service layer focuses on business logic
+
+throws IOException is written with addProduct as signature this means if an IOException were to occur
+then don't handle it just throw it up to the caller and the caller is in controller
+
