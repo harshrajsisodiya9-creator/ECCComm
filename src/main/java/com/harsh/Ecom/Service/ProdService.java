@@ -14,14 +14,15 @@ import java.util.NoSuchElementException;
 public class ProdService {
 
     @Autowired
-    ProdRepo repo;
+    private ProdRepo repo;
 
     public List<Product> getProducts(){
         return repo.findAll();
     }
 
     public Product getProduct(int prodId){
-        return repo.findById(prodId).orElse(null);
+        Product prod = repo.findById(prodId).orElse(null);
+        return prod;
     }
 
     public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
