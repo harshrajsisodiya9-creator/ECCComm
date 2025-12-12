@@ -21,8 +21,7 @@ public class ProdService {
     }
 
     public Product getProduct(int prodId){
-        Product prod = repo.findById(prodId).orElse(null);
-        return prod;
+        return repo.findById(prodId).orElse(null);
     }
 
     public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
