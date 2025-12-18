@@ -24,12 +24,13 @@ public class ProdService {
         return repo.findById(prodId).orElse(null);
     }
 
-    public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
-        prod.setImageName(imageFile.getOriginalFilename());
-        prod.setImageType(imageFile.getContentType());
-        prod.setImageData(imageFile.getBytes());            // idhar image save hui hai object(prod) ki field mein
-        return repo.save(prod);                             // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
-
+    public void addProduct(Product prod, MultipartFile imageFile) throws IOException {
+        if(imageFile != null && !imageFile.isEmpty()) {
+            prod.setImageName(imageFile.getOriginalFilename());
+            prod.setImageType(imageFile.getContentType());
+            prod.setImageData(imageFile.getBytes());
+        }                                                            // idhar image save hui hai object(prod) ki field mein
+        repo.save(prod);                             // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
     }
 
     public Product updateProduct(int prodId,Product prod,MultipartFile imageFile) throws IOException{

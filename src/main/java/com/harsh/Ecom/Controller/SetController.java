@@ -4,6 +4,7 @@ import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Service.ProdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,21 +21,28 @@ public class SetController {
     @Autowired
     private ProdService service;
 
-    @PostMapping("/product")
-    public ResponseEntity<?> addProd(@RequestPart Product prod, @RequestPart MultipartFile imageFile){
+    @PostMapping(value="/product" , consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> addProd(@RequestBody Product prod) throws IOException {
+        service.addProduct(prod, null);
+        return new ResponseEntity<>("Product Added",HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addProd(@RequestPart("product") Product prod, @RequestPart("imageFile") MultipartFile imageFile){
 
         try {
-            Product prod1 = service.addProduct(prod, imageFile);
-            return new ResponseEntity<>(prod1, HttpStatus.CREATED);
+            service.addProduct(prod, imageFile);
+            return new ResponseEntity<>("Product Added",HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+
     @PutMapping("/{prodId}")
-    public ResponseEntity<String> updateProd(@PathVariable int prodId, @RequestPart(required = false) Product prod, @RequestPart(required = false) MultipartFile imageFile){
+    public ResponseEntity<String> updateProd(@PathVariable int prodId, @RequestPart Product prod, @RequestPart MultipartFile imageFile){
         try {
-            Product prod1 = service.updateProduct(prodId,prod,imageFile);
+            service.updateProduct(prodId,prod,imageFile);
             return new ResponseEntity<>("Product Updated", HttpStatus.OK);
         }
         catch(NoSuchElementException e)
