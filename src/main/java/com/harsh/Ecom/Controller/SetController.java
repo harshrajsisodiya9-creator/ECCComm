@@ -28,13 +28,15 @@ public class SetController {
     }
 
     @PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addProd(@RequestPart("product") Product prod, @RequestPart("imageFile") MultipartFile imageFile){
+    public ResponseEntity<?> addProd(@RequestPart("product") Product prod, @RequestPart("imageFile") MultipartFile imageFile) throws IOException{
 
         try {
             service.addProduct(prod, imageFile);
             return new ResponseEntity<>("Product Added",HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
     }
 

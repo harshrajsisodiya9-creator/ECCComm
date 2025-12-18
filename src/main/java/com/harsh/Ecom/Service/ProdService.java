@@ -2,6 +2,7 @@ package com.harsh.Ecom.Service;
 
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Repo.ProdRepo;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +25,19 @@ public class ProdService {
         return repo.findById(prodId).orElse(null);
     }
 
-    public void addProduct(Product prod, MultipartFile imageFile) throws IOException {
-        if(imageFile != null && !imageFile.isEmpty()) {
+    public Product getProduct(String prodName){
+        return repo.findByProdNameContainingIgnoreCase(prodName).orElseThrow(() -> new EntityNotFoundException("Product not found"));
+    }
+
+    public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
+
+        if(imageFile!= null && !imageFile.isEmpty()){
             prod.setImageName(imageFile.getOriginalFilename());
             prod.setImageType(imageFile.getContentType());
             prod.setImageData(imageFile.getBytes());
-        }                                                            // idhar image save hui hai object(prod) ki field mein
-        repo.save(prod);                             // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
+        }                                                    // idhar image save hui hai object(prod) ki field mein
+        return repo.save(prod);                             // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
+
     }
 
     public Product updateProduct(int prodId,Product prod,MultipartFile imageFile) throws IOException{
