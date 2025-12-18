@@ -33,10 +33,8 @@ public class SetController {
         try {
             service.addProduct(prod, imageFile);
             return new ResponseEntity<>("Product Added",HttpStatus.CREATED);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
         }
     }
 
