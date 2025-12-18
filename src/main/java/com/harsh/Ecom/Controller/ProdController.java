@@ -23,7 +23,7 @@ public class ProdController {
         return service.getProducts();
     }
 
-    @GetMapping("/{prodId}")
+    @GetMapping("id/{prodId}")
     public ResponseEntity<Product> getProduct(@PathVariable int prodId){
         Product pro = service.getProduct(prodId);
         if(pro != null){
@@ -31,6 +31,16 @@ public class ProdController {
         }
         else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("name/{prodName}")
+    public ResponseEntity<?> getProductByname(@PathVariable String prodName){
+        try{
+            Product prod = service.getProduct(prodName);
+            return new ResponseEntity<>(prod, HttpStatus.FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -2,6 +2,7 @@ package com.harsh.Ecom.Service;
 
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Repo.ProdRepo;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,10 @@ public class ProdService {
 
     public Product getProduct(int prodId){
         return repo.findById(prodId).orElse(null);
+    }
+
+    public Product getProduct(String prodName){
+        return repo.findByProdNameContainingIgnoreCase(prodName).orElseThrow(() -> new EntityNotFoundException("Product not found"));
     }
 
     public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
