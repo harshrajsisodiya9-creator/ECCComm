@@ -1,7 +1,9 @@
 package com.harsh.Ecom.Controller;
 
+import com.harsh.Ecom.DTO.ProdMapper;
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Service.ProdService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,10 +18,13 @@ import java.util.NoSuchElementException;
 @RestController
 @CrossOrigin
 @RequestMapping("/set")
+@RequiredArgsConstructor
 public class SetController {
 
     @Autowired
     private ProdService service;
+
+   private final ProdMapper mapper;
 
     @PostMapping(value="/product" , consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addProd(@RequestBody Product prod) throws IOException {
