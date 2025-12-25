@@ -7,6 +7,13 @@ Second half of the ProdService which is done for updating, adding and deleting o
 Mapstruct is done by providing an Interface which spring automatically produces class of during compile time(ProductMapper(interface) class(ProductMapperImpl) (class made by compiler))
 Compile Time safety is provided by MapStruct as it gives error(if exist) on compile time only
 
+New updates : Splitting DTO into two parts so that one is created for the request from the user and one for response to the user
+Request from the client includes like add product,update,delete
+while response meaning responding to the client
+Think of it like this we are providing response the client(giving price name image etc..)
+while in request we are taking data from the user to update and shit,
+So in response we are including all the things to return
+while in request we can only have the json fields(strings and ints) and multipart we are taking it as separate file so no neen to include that in DTO
 
 FILE CHANGES:
 modelMapper files: 1.) Config/ModelConfig 2.)DTO/ProdDto

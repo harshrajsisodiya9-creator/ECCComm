@@ -2,6 +2,7 @@ package com.harsh.Ecom.Service;
 
 import com.harsh.Ecom.DTO.ProdDto;
 import com.harsh.Ecom.DTO.ProdMapper;
+import com.harsh.Ecom.DTO.ProdResponseDto;
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Repo.ProdRepo;
 import jakarta.persistence.EntityNotFoundException;
@@ -52,28 +53,30 @@ public class ProdService {
 
     private final ProdMapper mapper;
 
-    public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
+    public ProdDto addProduct(ProdResponseDto prodResponseDto, MultipartFile imageFile) throws IOException {
 
+        Product prod = mapper.toEntity(prodResponseDto);
+        System.out.println(prod.getProdPrice());
         if(imageFile!= null && !imageFile.isEmpty()){
             prod.setImageName(imageFile.getOriginalFilename());
             prod.setImageType(imageFile.getContentType());
             prod.setImageData(imageFile.getBytes());
         }                                                    // idhar image save hui hai object(prod) ki field mein
-        return repo.save(prod);                             // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
+        Product prod1 = repo.save(prod);
+        return mapper.toDto(prod1);                                                     // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
 
     }
 
-    public Product updateProduct(int prodId,Product prod,MultipartFile imageFile) throws IOException{
+    public ProdDto updateProduct(int prodId,ProdResponseDto prod,MultipartFile imageFile) throws IOException{
         Product newProd = repo.findById(prodId).orElseThrow(() -> new NoSuchElementException("Product not found"));
 
         if(imageFile != null && !imageFile.isEmpty()){
-            prod.setImageData(imageFile.getBytes());
-            prod.setImageName(imageFile.getOriginalFilename());
-            prod.setImageType(imageFile.getContentType());
+            newProd.setImageData(imageFile.getBytes());
+            newProd.setImageName(imageFile.getOriginalFilename());
+            newProd.setImageType(imageFile.getContentType());
         }
-
-
-        return repo.save(prod);
+        Product prod1 = repo.save(mapper.toEntity(prod));
+        return mapper.toDto(prod1);
     }
 
     public void deleteProd(int prodId){

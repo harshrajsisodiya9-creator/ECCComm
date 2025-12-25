@@ -35,8 +35,9 @@ public class ProdController {
         }
     }
 
+     // errrrrorrrrr in this part patch it out
     @GetMapping("name/{prodName}")
-    public ResponseEntity<?> getProductByname(@PathVariable String prodName){
+    public ResponseEntity<?> getProductByName(@PathVariable String prodName){
         try{
             ProdDto prod = service.getProduct(prodName);
             return new ResponseEntity<>(prod, HttpStatus.FOUND);

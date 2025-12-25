@@ -1,6 +1,8 @@
 package com.harsh.Ecom.Controller;
 
+import com.harsh.Ecom.DTO.ProdDto;
 import com.harsh.Ecom.DTO.ProdMapper;
+import com.harsh.Ecom.DTO.ProdResponseDto;
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Service.ProdService;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +29,17 @@ public class SetController {
    private final ProdMapper mapper;
 
     @PostMapping(value="/product" , consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addProd(@RequestBody Product prod) throws IOException {
-        service.addProduct(prod, null);
-        return new ResponseEntity<>("Product Added",HttpStatus.CREATED);
+    public ResponseEntity<ProdDto> addProd(@RequestBody ProdResponseDto prod) throws IOException {
+        ProdDto dto = service.addProduct(prod, null);
+        return new ResponseEntity<>(dto,HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addProd(@RequestPart("product") Product prod, @RequestPart("imageFile") MultipartFile imageFile) throws IOException{
+    public ResponseEntity<?> addProd(@RequestPart("prodResponseDto") ProdResponseDto prod, @RequestPart("imageFile") MultipartFile imageFile) throws IOException{
 
         try {
-            service.addProduct(prod, imageFile);
-            return new ResponseEntity<>("Product Added",HttpStatus.CREATED);
+            ProdDto dto = service.addProduct(prod, imageFile);
+            return new ResponseEntity<>(dto,HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -45,10 +47,10 @@ public class SetController {
 
 
     @PutMapping("/{prodId}")
-    public ResponseEntity<String> updateProd(@PathVariable int prodId, @RequestPart Product prod, @RequestPart MultipartFile imageFile){
+    public ResponseEntity<?> updateProd(@PathVariable int prodId, @RequestPart ProdResponseDto prod, @RequestPart MultipartFile imageFile){
         try {
-            service.updateProduct(prodId,prod,imageFile);
-            return new ResponseEntity<>("Product Updated", HttpStatus.OK);
+             ProdDto dto = service.updateProduct(prodId,prod,imageFile);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch(NoSuchElementException e)
         {

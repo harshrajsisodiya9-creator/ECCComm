@@ -12,6 +12,12 @@ public interface ProdMapper {
     @Mapping(source = "prodPrice", target = "price")
     ProdDto toDto(Product prod);
 
+    @Mapping(source = "prodName", target = "name")
+    @Mapping(source = "prodPrice", target = "price")
+    @Mapping(source = "prodId", target = "id")
+    ProdResponseDto toResponseDto(Product prod);
+
     @InheritInverseConfiguration            // name -> prodName , price -> prodPrice inverse if above mapping inheritance
-    Product toEntity(ProdDto dto);
+    Product toEntity(ProdResponseDto dto);
+
 }
