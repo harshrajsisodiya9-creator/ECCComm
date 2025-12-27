@@ -35,7 +35,7 @@ public class SetController {
     }
 
     @PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addProd(@RequestPart("prodResponseDto") ProdResponseDto prod, @RequestPart("imageFile") MultipartFile imageFile) throws IOException{
+    public ResponseEntity<?> addProd(@RequestPart("prod") ProdResponseDto prod, @RequestPart("imageFile") MultipartFile imageFile) throws IOException{
 
         try {
             ProdDto dto = service.addProduct(prod, imageFile);
