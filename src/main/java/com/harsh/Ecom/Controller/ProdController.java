@@ -1,5 +1,6 @@
 package com.harsh.Ecom.Controller;
 
+import com.harsh.Ecom.DTO.ProdDto;
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Service.ProdService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ public class ProdController {
     private ProdService service;
 
     @GetMapping("/all")
-    public List<Product> getProds(){
+    public List<ProdDto> getProds(){
         return service.getProducts();
     }
 
     @GetMapping("id/{prodId}")
-    public ResponseEntity<Product> getProduct(@PathVariable int prodId){
-        Product pro = service.getProduct(prodId);
+    public ResponseEntity<ProdDto> getProduct(@PathVariable int prodId){
+        ProdDto pro = service.getProduct(prodId);
         if(pro != null){
             return new ResponseEntity<>(pro, HttpStatus.FOUND);
         }
@@ -34,10 +35,11 @@ public class ProdController {
         }
     }
 
+     // errrrrorrrrr in this part patch it out
     @GetMapping("name/{prodName}")
-    public ResponseEntity<?> getProductByname(@PathVariable String prodName){
+    public ResponseEntity<?> getProductByName(@PathVariable String prodName){
         try{
-            Product prod = service.getProduct(prodName);
+            ProdDto prod = service.getProduct(prodName);
             return new ResponseEntity<>(prod, HttpStatus.FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -46,7 +48,7 @@ public class ProdController {
 
     @GetMapping("/{prodId}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable int prodId){
-        Product prod = service.getProduct(prodId);
+        ProdDto prod = service.getProduct(prodId);
         byte[] imageFile = prod.getImageData();
 
         return ResponseEntity.ok()
