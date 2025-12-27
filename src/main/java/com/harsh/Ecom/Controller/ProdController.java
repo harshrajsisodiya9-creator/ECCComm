@@ -53,6 +53,7 @@ public class ProdController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(prod.getImageType()))
-                .body(imageFile);
+                .body(imageFile);                                      // new method of returning responseEntity.ok() (static factory method)        both methods are doing same thing no difference in response time/memory taken
+                                                                       // old one/legacy style was returning like this: return new ResponseEntity<>() (creating a new instance)
     }
 }
