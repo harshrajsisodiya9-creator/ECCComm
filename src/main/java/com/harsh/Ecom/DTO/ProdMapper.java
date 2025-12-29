@@ -24,4 +24,5 @@ public interface ProdMapper {
     // using the toEntity one can break JPA identity wipe fields and overwrite with nulls
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(ProdResponseDto prodResponseDto, @MappingTarget Product entity);
+    // provide an entity which already exists so that all the corresponding changes gets into it and the remaining ones stay as it is and then that gets saved to the repo
 }
