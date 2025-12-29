@@ -36,7 +36,7 @@ public class ProdService {
                 .toList();                                                          // prod is already a object of the product class so its already an instance of the product class
                                                                                     // but ProductDto is not initialized(new ProdDto()) so we need to provide modelMapper with a blueprint
                                                                                     // it needs to know which object need to be created from which class and copy fields from the source to destination
-    }
+    }                                                                               // if already created object instance is there then no problem we can write proddto without the .class thingi
 
     // .map() requires a function(lambda) as a expression not an object so we provide with a lambda expression(a simplified version of function)
     // cant write .map(modelMapper.map(prod,ProdDTO.class)) because modelMapper.map() returns a ProdDTO object not a function expression.
@@ -82,5 +82,20 @@ public class ProdService {
     public void deleteProd(int prodId){
         repo.findById(prodId).orElseThrow(()-> new NoSuchElementException("Product not found"));
         repo.deleteById(prodId);
+    }
+
+    public ProdDto patchProduct (int prodId, ProdResponseDto prod, MultipartFile imageFile) throws IOException {
+        Product prod1 = repo.findById(prodId).orElseThrow(() -> new NoSuchElementException("No such Product"));
+
+        if( prod!= null){
+            mapper.updateEntityFromDto(prod, prod1);
+        }
+
+        if(!imageFile.isEmpty() && imageFile != null){
+            prod1.setImageData(imageFile.getBytes());
+            prod1.setImageName(imageFile.getOriginalFilename());
+            prod1.setImageType(imageFile.getContentType());
+        }
+        return mapper.toDto(repo.save(prod1));
     }
 }

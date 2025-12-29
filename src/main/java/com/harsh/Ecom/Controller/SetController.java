@@ -45,7 +45,7 @@ public class SetController {
         }
     }
 
-
+    // full replacement of the entity from new data
     @PutMapping("/{prodId}")
     public ResponseEntity<?> updateProd(@PathVariable int prodId, @RequestPart ProdResponseDto prod, @RequestPart MultipartFile imageFile){
         try {
@@ -56,6 +56,20 @@ public class SetController {
         {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Processing Image");
+        }
+    }
+
+    @PatchMapping("/{prodId}")
+    public ResponseEntity<?> patchProd(@PathVariable int prodId,@RequestPart ProdResponseDto prod, @RequestPart MultipartFile imageFile){
+        try{
+            ProdDto dto = service.patchProduct(prodId,prod,imageFile);
+            return ResponseEntity.ok(dto);
+        }
+        catch(NoSuchElementException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();                // add .build with when you dont want a response body
+        }
+        catch (IOException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Processing Image");
         }
     }

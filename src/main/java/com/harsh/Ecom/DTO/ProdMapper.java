@@ -1,10 +1,10 @@
 package com.harsh.Ecom.DTO;
 
 import com.harsh.Ecom.Model.Product;
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
+
+// de Dto se rhe hai response, le ProdResponse(response from user) se rhe hai
 @Mapper(componentModel = "spring")
 public interface ProdMapper {
 
@@ -20,4 +20,8 @@ public interface ProdMapper {
     @InheritInverseConfiguration            // name -> prodName , price -> prodPrice inverse if above mapping inheritance
     Product toEntity(ProdResponseDto dto);
 
+    // another method for patching entity
+    // using the toEntity one can break JPA identity wipe fields and overwrite with nulls
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromDto(ProdResponseDto prodResponseDto, @MappingTarget Product entity);
 }
