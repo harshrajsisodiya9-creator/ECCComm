@@ -1,9 +1,14 @@
 package com.harsh.Ecom.Controller;
 
+import com.harsh.Ecom.DTO.ProdDto;
+import com.harsh.Ecom.DTO.ProdMapper;
+import com.harsh.Ecom.DTO.ProdResponseDto;
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Service.ProdService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,32 +20,56 @@ import java.util.NoSuchElementException;
 @RestController
 @CrossOrigin
 @RequestMapping("/set")
+@RequiredArgsConstructor
 public class SetController {
 
     @Autowired
     private ProdService service;
 
-    @PostMapping("/product")
-    public ResponseEntity<?> addProd(@RequestPart Product prod, @RequestPart MultipartFile imageFile){
+   private final ProdMapper mapper;
+
+    @PostMapping(value="/product" , consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ProdDto> addProd(@RequestBody ProdResponseDto prod) throws IOException {
+        ProdDto dto = service.addProduct(prod, null);
+        return new ResponseEntity<>(dto,HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> addProd(@RequestPart("prod") ProdResponseDto prod, @RequestPart("imageFile") MultipartFile imageFile) throws IOException{
 
         try {
-            Product prod1 = service.addProduct(prod, imageFile);
-            return new ResponseEntity<>(prod1, HttpStatus.CREATED);
+            ProdDto dto = service.addProduct(prod, imageFile);
+            return new ResponseEntity<>(dto,HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    // full replacement of the entity from new data
     @PutMapping("/{prodId}")
-    public ResponseEntity<String> updateProd(@PathVariable int prodId, @RequestPart(required = false) Product prod, @RequestPart(required = false) MultipartFile imageFile){
+    public ResponseEntity<?> updateProd(@PathVariable int prodId, @RequestPart ProdResponseDto prod, @RequestPart MultipartFile imageFile){
         try {
-            Product prod1 = service.updateProduct(prodId,prod,imageFile);
-            return new ResponseEntity<>("Product Updated", HttpStatus.OK);
+             ProdDto dto = service.updateProduct(prodId,prod,imageFile);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         catch(NoSuchElementException e)
         {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Processing Image");
+        }
+    }
+
+    @PatchMapping("/{prodId}")
+    public ResponseEntity<?> patchProd(@PathVariable int prodId,@RequestPart ProdResponseDto prod, @RequestPart MultipartFile imageFile){
+        try{
+            ProdDto dto = service.patchProduct(prodId,prod,imageFile);
+            return ResponseEntity.ok(dto);
+        }
+        catch(NoSuchElementException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();                // add .build with when you dont want a response body
+        }
+        catch (IOException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error Processing Image");
         }
     }

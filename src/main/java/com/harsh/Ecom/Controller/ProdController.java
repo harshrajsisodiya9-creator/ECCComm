@@ -1,5 +1,6 @@
 package com.harsh.Ecom.Controller;
 
+import com.harsh.Ecom.DTO.ProdDto;
 import com.harsh.Ecom.Model.Product;
 import com.harsh.Ecom.Service.ProdService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ public class ProdController {
     private ProdService service;
 
     @GetMapping("/all")
-    public List<Product> getProds(){
+    public List<ProdDto> getProds(){
         return service.getProducts();
     }
 
-    @GetMapping("/{prodId}")
-    public ResponseEntity<Product> getProduct(@PathVariable int prodId){
-        Product pro = service.getProduct(prodId);
+    @GetMapping("id/{prodId}")
+    public ResponseEntity<ProdDto> getProduct(@PathVariable int prodId){
+        ProdDto pro = service.getProduct(prodId);
         if(pro != null){
             return new ResponseEntity<>(pro, HttpStatus.FOUND);
         }
@@ -34,13 +35,25 @@ public class ProdController {
         }
     }
 
+     // errrrrorrrrr in this part patch it out
+    @GetMapping("name/{prodName}")
+    public ResponseEntity<?> getProductByName(@PathVariable String prodName){
+        try{
+            ProdDto prod = service.getProduct(prodName);
+            return new ResponseEntity<>(prod, HttpStatus.FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/{prodId}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable int prodId){
-        Product prod = service.getProduct(prodId);
+        ProdDto prod = service.getProduct(prodId);
         byte[] imageFile = prod.getImageData();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(prod.getImageType()))
-                .body(imageFile);
+                .body(imageFile);                                      // new method of returning responseEntity.ok() (static factory method)        both methods are doing same thing no difference in response time/memory taken
+                                                                       // old one/legacy style was returning like this: return new ResponseEntity<>() (creating a new instance)
     }
 }

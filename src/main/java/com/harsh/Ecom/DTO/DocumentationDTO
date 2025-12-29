@@ -1,0 +1,24 @@
+So im gonna have both model mapper and mapstruct implementation in here
+modelMapper was done using @Configuration and @Bean annotations so that mapping of the fields from product could be done(i.e different field names for same data)
+modelMapper does the entity to DTO conversion during runtime(runtime errors may occur), so its better to use mapStruct
+First half of the ProdService is used by modelMapper to for conversion and returning of ProdDto
+
+Second half of the ProdService which is done for updating, adding and deleting of products on the database is done with mapStruct
+Mapstruct is done by providing an Interface which spring automatically produces class of during compile time(ProductMapper(interface) class(ProductMapperImpl) (class made by compiler))
+Compile Time safety is provided by MapStruct as it gives error(if exist) on compile time only
+
+New updates : Splitting DTO into two parts so that one is created for the request from the user and one for response to the user
+Request from the client includes like add product,update,delete
+while response meaning responding to the client
+Think of it like this we are providing response the client(giving price name image etc..)
+while in request we are taking data from the user to update and shit,
+So in response we are including all the things to return
+while in request we can only have the json fields(strings and ints) and multipart we are taking it as separate file so no neen to include that in DTO
+
+FILE CHANGES:
+modelMapper files: 1.) Config/ModelConfig 2.)DTO/ProdDto
+MapStruct files: 1. ) DTO/ProdMapper
+
+files changed: Product Controller: included field prodDto using constructor injection, changed output object from product to prodDTO
+ProdService: included modelMapper and MapStruct, changed all the methods for adding and updating database, to include DTO
+SetController
