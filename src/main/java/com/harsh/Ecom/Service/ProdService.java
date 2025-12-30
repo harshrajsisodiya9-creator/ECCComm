@@ -34,9 +34,9 @@ public class ProdService {
                 .stream()
                 .map(prod -> modelMapper.map(prod, ProdDto.class))          // we write ProdDTO.class and not ProdDTo or prod.class too because
                 .toList();                                                          // prod is already a object of the product class so its already an instance of the product class
-                                                                                    // but ProductDto is not initialized(new ProdDto()) so we need to provide modelMapper with a blueprint
-                                                                                    // it needs to know which object need to be created from which class and copy fields from the source to destination
-    }                                                                               // if already created object instance is there then no problem we can write proddto without the .class thingi
+                // .map does is List<prod> -> individual prod                       // but ProductDto is not initialized(new ProdDto()) so we need to provide modelMapper with a blueprint
+               // consider (prod -> blhablhah) as func(prod){model.mapper(blah)}    // it needs to know which object need to be created from which class and copy fields from the source to destination
+    }          // lambda func                                                       // if already created object instance is there then no problem we can write proddto without the .class thingi
 
     // .map() requires a function(lambda) as a expression not an object so we provide with a lambda expression(a simplified version of function)
     // cant write .map(modelMapper.map(prod,ProdDTO.class)) because modelMapper.map() returns a ProdDTO object not a function expression.
