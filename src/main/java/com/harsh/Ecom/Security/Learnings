@@ -1,0 +1,12 @@
+In auth service we could have just used lookup from databse using User user = userRepo.getByUsername(username)
+
+but instead we first we authenticate it using authenticationManager(fill it with the provided username and password)
+then loads the user from the database(via UserDetailsService(custom made ny me also provided by the spring security module))
+then hashes the provided password compares it with the stored hash in password database
+verifies the account state(locked,enabled,expired)
+applies the respective security policies
+throws an exception if anything is wrong
+
+Note: Authentication Is a Policy Engine, Not a Lookup
+
+if all checks are passed we get authentication.authenticated() == true

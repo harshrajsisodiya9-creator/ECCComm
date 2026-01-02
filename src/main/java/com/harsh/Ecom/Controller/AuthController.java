@@ -31,4 +31,13 @@ public class AuthController {
             return new ResponseEntity<>(e.getMessage() ,HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody LoginRequestDto loginRequestDto){
+        try{
+            return ResponseEntity.ok(authService.signup(loginRequestDto));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
 }

@@ -6,4 +6,7 @@ import lombok.Data;
 public class LoginResponseDto {
     private String jwt;
     private Long userId;
+
+    public LoginResponseDto(){};
+    public LoginResponseDto(String jwt, Long userId){this.jwt = jwt;this.userId=userId;}
 }

@@ -19,6 +19,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    public Long getId(){return id;}
+
     public String getUsername(){return username;}          // both getusername and get paswords are there in UserDetails
     public void setUsername(String username){this.username = username;}
 
