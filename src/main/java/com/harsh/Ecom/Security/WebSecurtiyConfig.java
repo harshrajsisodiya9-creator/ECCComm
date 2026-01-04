@@ -7,6 +7,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -31,7 +33,12 @@ public class WebSecurtiyConfig {
 //                .formLogin(Customizer.withDefaults());
         return httpSecurity.build();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
 }
+
+
 
 // by default in spring the sessions are saved inMemory and saves/connects with the userID and checks for validity
 // we don't need sessions in JWT(as it is sessionless)

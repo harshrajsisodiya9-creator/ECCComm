@@ -9,6 +9,8 @@ import com.harsh.Ecom.Repo.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,11 +21,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
     private final AuthenticationManager authenticationManager;
-    public AuthService(LoginMapper mapper, AuthenticationManager authenticationManager, AuthUtil authUtil, UserRepository userRepository){
+    private final PasswordEncoder encoder;
+    public AuthService(PasswordEncoder encoder, LoginMapper mapper, AuthenticationManager authenticationManager, AuthUtil authUtil, UserRepository userRepository){
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.authUtil = authUtil;
         this.mapper = mapper;
+        this.encoder = encoder;
     }
 
 
@@ -32,7 +36,10 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(),loginRequestDto.getPassword())
         );
 
-        User user = (User) authentication.getPrincipal();
+        UserDetails principal = (UserDetails) authentication.getPrincipal();
+        // typecasting (UserDetails) explicitly here cause getPrincipal just returns a generic object
+
+        User user = userRepository.findByUsername(principal.getUsername()).orElseThrow();
 
         String token = authUtil.generateAccessToken(user);
         return new LoginResponseDto(token, user.getId());
@@ -44,7 +51,9 @@ public class AuthService {
         if(user != null){
             throw new IllegalArgumentException("Username already taken");
         }
-        user = userRepository.save(mapper.toUser(loginRequestDto));     // for now saving the username and password directly to the database next target is to save Bcrypt hash encoding
+        user = mapper.toUser(loginRequestDto);
+        user.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(user);
 
         return new SignUpDto(user.getUsername());
     }
