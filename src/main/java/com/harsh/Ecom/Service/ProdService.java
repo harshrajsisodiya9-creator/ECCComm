@@ -46,9 +46,12 @@ public class ProdService {
         return modelMapper.map(prod, ProdDto.class);
     }
 
-    public ProdDto getProduct(String prodName){
-       Product prod = repo.findByProdNameContainingIgnoreCase(prodName).orElseThrow(() -> new EntityNotFoundException("Product not found"));
-       return modelMapper.map(prod, ProdDto.class);
+    public List<ProdDto> getProduct(String prodName){
+       List <Product> prod = repo.findByProdNameContainingIgnoreCase(prodName);
+       return prod
+               .stream()
+               .map(mapper::toDto)              //prods -> mapper.toDto(prods)
+               .toList();
     }
 
     private final ProdMapper mapper;

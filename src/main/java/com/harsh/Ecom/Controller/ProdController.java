@@ -39,7 +39,7 @@ public class ProdController {
     @GetMapping("name/{prodName}")
     public ResponseEntity<?> getProductByName(@PathVariable String prodName){
         try{
-            ProdDto prod = service.getProduct(prodName);
+            List<ProdDto> prod = service.getProduct(prodName);
             return new ResponseEntity<>(prod, HttpStatus.FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
