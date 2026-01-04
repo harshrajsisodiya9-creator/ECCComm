@@ -48,6 +48,9 @@ public class ProdService {
 
     public List<ProdDto> getProduct(String prodName){
        List <Product> prod = repo.findByProdNameContainingIgnoreCase(prodName);
+       if(prod.isEmpty()){
+           throw new NoSuchElementException();
+       }
        return prod
                .stream()
                .map(mapper::toDto)              //prods -> mapper.toDto(prods)
