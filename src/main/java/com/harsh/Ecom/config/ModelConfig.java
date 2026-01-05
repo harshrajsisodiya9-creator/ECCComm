@@ -7,7 +7,7 @@ import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration                      //  tells java we are making different beans in here
+@Configuration
 public class ModelConfig {
 
     @Bean

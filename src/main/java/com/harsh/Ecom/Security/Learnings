@@ -10,3 +10,34 @@ throws an exception if anything is wrong
 Note: Authentication Is a Policy Engine, Not a Lookup
 
 if all checks are passed we get authentication.authenticated() == true
+
+
+
+HTTP request arrives
+   ↓  (alt + 25)
+Spring Security Filter Chain starts
+   ↓
+SecurityContextHolderFilter
+   ↓
+SecurityContext is CREATED (empty)
+   ↓
+Your JWT filter runs
+   ↓
+You call setAuthentication(...)
+   ↓
+Controller executes
+   ↓
+Response sent
+   ↓
+SecurityContext is CLEARED
+
+SecurityContextHolder does not need manual initialization because:
+Spring Security initializes it automatically at the beginning of every HTTP request using a filter.
+We are only modifying an already-created context.
+
+SecurityContextHolder is static + ThreadLocal
+Initialized automatically by Spring Security filters
+One context per request thread
+Cleared after request completion
+You never create it manually
+Your JWT filter runs after initialization

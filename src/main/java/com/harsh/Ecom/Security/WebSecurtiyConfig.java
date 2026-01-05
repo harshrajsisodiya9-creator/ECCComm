@@ -10,9 +10,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class WebSecurtiyConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+    public WebSecurtiyConfig(JwtAuthFilter jwtAuthFilter){this.jwtAuthFilter = jwtAuthFilter;}
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -29,7 +33,9 @@ public class WebSecurtiyConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/set/**").hasRole("ADMIN")
                         .requestMatchers("/auth/**").permitAll()
-        );
+                        .requestMatchers("/product/**").authenticated()
+        )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 //                .formLogin(Customizer.withDefaults());
         return httpSecurity.build();
     }

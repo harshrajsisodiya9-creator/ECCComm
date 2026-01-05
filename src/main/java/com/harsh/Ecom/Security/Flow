@@ -1,0 +1,28 @@
+
+
+After logging in
+Client calls protected API
+Get /products
+Authorization : Bearer fnewiofg...
+
+Tomcat receives request converts into HttpServletRequest
+
+Spring filter chain starts, creates a empty SecurityContext, binds to current thread
+
+JWT authentication filter executes
+Custom filter runs
+Extract header from request, getHeader("Authorization")
+Parse & validate JWT(Signature verification, Expiration checking and claims extraction)
+Fill/Store the SecurityContextHolder with UsernamePasswordAuthenticationToken
+
+Authorization
+Spring Checks authentication.getAuthorities()
+
+After this process the request goes from security filter to spring mvc
+Controller Execution
+
+Response is Returned
+Controller returns JSON
+SecurityContext is Cleared(Stateless behaviour preserved)
+
+This thing repeats with every request from the user
