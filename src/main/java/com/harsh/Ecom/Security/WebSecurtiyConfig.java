@@ -1,5 +1,7 @@
 package com.harsh.Ecom.Security;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurtiyConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
-    public WebSecurtiyConfig(JwtAuthFilter jwtAuthFilter){this.jwtAuthFilter = jwtAuthFilter;}
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -31,11 +36,19 @@ public class WebSecurtiyConfig {
                         httpSecuritySessionManagementConfigurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/set/**").hasRole("ADMIN")
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/product/**").authenticated()
-        )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                        .requestMatchers("/set/**").hasRole("ADMIN")                    // all these are the endpoints which are provided by me to the application
+                        .requestMatchers("/auth/**").permitAll()                        //so any framework endpoints(/login which is there in oAuth2) will not be affected by these
+                        .requestMatchers("/product/**").authenticated()                 // even if i write .anyRequest.authenticated(); (which only works with my created endpoints)
+                      //. anyRequest().authenticated();
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)            // ↓
+                .oauth2Login(oAuth2 -> oAuth2.failureHandler(      // this will create a login page /login
+                        (request, response, exception) -> {
+                            log.error("OAuth2 error : {}",exception.getMessage());
+                        }
+                        )
+                        .successHandler(oAuth2SuccessHandler)
+                );
 //                .formLogin(Customizer.withDefaults());
         return httpSecurity.build();
     }
