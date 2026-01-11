@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin         //As the backend and frontend run on two different ports Cross origin resource sharing(CORS) is not allowed by java so CrossOrigin is required for it to work
+@CrossOrigin
 @RequestMapping("/product")
 public class ProdController {
 
@@ -35,7 +35,7 @@ public class ProdController {
         }
     }
 
-     // errrrrorrrrr in this part patch it out
+
     @GetMapping("name/{prodName}")
     public ResponseEntity<?> getProductByName(@PathVariable String prodName){
         try{
