@@ -33,6 +33,7 @@ public class ProdService {
         this.mapper = mapper;
     }         // constructor injection can be avoided if we use @RequiredArgsConstructor from lombok
 
+    @Cacheable(value=cache_name, key = "#prodId")
     public List<ProdDto> getProducts(){
         List<Product> prods = repo.findAll();
         return prods
