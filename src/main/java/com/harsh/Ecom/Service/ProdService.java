@@ -33,7 +33,6 @@ public class ProdService {
         this.mapper = mapper;
     }         // constructor injection can be avoided if we use @RequiredArgsConstructor from lombok
 
-    @Cacheable(value=cache_name, key = "#prodId")
     public List<ProdDto> getProducts(){
         List<Product> prods = repo.findAll();
         return prods
@@ -96,6 +95,20 @@ public class ProdService {
     public void deleteProd(int prodId){
         repo.findById(prodId).orElseThrow(()-> new NoSuchElementException("Product not found"));
         repo.deleteById(prodId);
+    }
+
+    // @Caching can be used for multiple things like here its used for different keys(not a good practice just for example
+    //  can be used for multiple cache deletion) , ex (@CacheEvict("address")),(@CacheEvict("product"))
+    
+    //@Caching(evict = {
+    //  @CacheEvict(value="product", key="#prodName"),
+    //  @CacheEvict(value="product", key="#prodId")
+    // })
+
+    @CacheEvict(cacheNames = cache_name, key = "#prodName")
+    public void deleteProds(String prodName){
+        repo.findByProdName(prodName).orElseThrow(() -> new NoSuchElementException("No product"));
+        repo.deleteByProdName(prodName);
     }
 
     @CachePut(value = cache_name, key = "#prodId")
