@@ -5,9 +5,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
 @Entity
-public class Product {
+public class Product implements Serializable {
 
     @Id
     private int prodId;
