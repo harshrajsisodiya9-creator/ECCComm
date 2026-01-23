@@ -41,3 +41,10 @@ The issue was resolved by taking PasswordEncoder bean into a separate
 configuration class, thereby enforcing proper layering between security configuration and application
  services.
  NEW CRYPTOCONFIG CLASS made
+
+ Data Truncation error in MYSQL
+ Caused by ENUMERATED field provider, added EMAIL field in provider later on which was not getting into
+ table giving data truncation error; reason the column provider in MYSQL was ENUMERATED and only accepted
+ the original values and not the newly added EMAIL, so had to ALTER the table, specifically only provider field
+ to VARCHAR(20), so that even in future if any new field is introduced in ENUM we dont have any problem.
+ (TLDR: changed provider field in database from enum to varchar)
