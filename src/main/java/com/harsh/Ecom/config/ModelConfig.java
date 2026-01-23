@@ -19,6 +19,8 @@ public class ModelConfig {
              protected void configure(){
                 map().setName(source.getProdName());
                 map().setPrice(source.getProdPrice());
+                map().setId(source.getProdId());
+
             }
         });
         // reverse mapping from productDto to product
@@ -27,6 +29,7 @@ public class ModelConfig {
             protected void configure(){
                 map().setProdName(source.getName());
                 map().setProdPrice(source.getPrice());
+                map().setProdId(source.getId());
             }
         });
         return mapper;

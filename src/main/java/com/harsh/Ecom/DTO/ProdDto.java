@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 
-public class ProdDto {
+
+public class ProdDto implements Serializable {
+    private int id;
     private int price;
     private String name;
 
@@ -16,10 +19,14 @@ public class ProdDto {
 
     public ProdDto(){};
 
-    public ProdDto(int price, String name){
+    public ProdDto(int price, String name,int id){
         this.name = name;
         this.price = price;
+        this.id = id;
     }
+
+    public int getId(){return id;}
+    public void setId(int id){this.id = id;}
 
     public int getPrice() { return price; }
     public void setPrice(int price) { this.price = price; }

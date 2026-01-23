@@ -8,6 +8,9 @@ import com.harsh.Ecom.Repo.ProdRepo;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +20,8 @@ import java.util.NoSuchElementException;
 
 @Service
 public class ProdService {
+
+    private final String cache_name = "product";
 
     @Autowired                // field injection
     private ProdRepo repo;
@@ -41,11 +46,13 @@ public class ProdService {
     // .map() requires a function(lambda) as a expression not an object so we provide with a lambda expression(a simplified version of function)
     // cant write .map(modelMapper.map(prod,ProdDTO.class)) because modelMapper.map() returns a ProdDTO object not a function expression.
 
+    @Cacheable(value=cache_name, key = "#prodId")
     public ProdDto getProduct(int prodId){
         Product prod = repo.findById(prodId).orElseThrow(()-> new EntityNotFoundException("Product not found"));
         return modelMapper.map(prod, ProdDto.class);
     }
 
+    @Cacheable(value = cache_name, key ="#prodName")
     public List<ProdDto> getProduct(String prodName){
        List <Product> prod = repo.findByProdNameContainingIgnoreCase(prodName);
        if(prod.isEmpty()){
@@ -59,6 +66,7 @@ public class ProdService {
 
     private final ProdMapper mapper;
 
+    @CachePut(cacheNames = cache_name, key = "#result.id")
     public ProdDto addProduct(ProdResponseDto prodResponseDto, MultipartFile imageFile) throws IOException {
 
         Product prod = mapper.toEntity(prodResponseDto);
@@ -73,6 +81,7 @@ public class ProdService {
 
     }
 
+    @CachePut(value = cache_name, key = "#result.prodId")
     public ProdDto updateProduct(int prodId,ProdResponseDto prod,MultipartFile imageFile) throws IOException{
         Product newProd = repo.findById(prodId).orElseThrow(() -> new NoSuchElementException("Product not found"));
 
@@ -85,11 +94,27 @@ public class ProdService {
         return mapper.toDto(prod1);
     }
 
+    @CacheEvict(cacheNames = cache_name, key = "#prodId")
     public void deleteProd(int prodId){
         repo.findById(prodId).orElseThrow(()-> new NoSuchElementException("Product not found"));
         repo.deleteById(prodId);
     }
 
+    // @Caching can be used for multiple things like here its used for different keys(not a good practice just for example
+    //  can be used for multiple cache deletion) , ex (@CacheEvict("address")),(@CacheEvict("product"))
+    
+    //@Caching(evict = {
+    //  @CacheEvict(value="product", key="#prodName"),
+    //  @CacheEvict(value="product", key="#prodId")
+    // })
+
+    @CacheEvict(cacheNames = cache_name, key = "#prodName")
+    public void deleteProds(String prodName){
+        repo.findByProdName(prodName).orElseThrow(() -> new NoSuchElementException("No product"));
+        repo.deleteByProdName(prodName);
+    }
+
+    @CachePut(value = cache_name, key = "#prodId")
     public ProdDto patchProduct (int prodId, ProdResponseDto prod, MultipartFile imageFile) throws IOException {
         Product prod1 = repo.findById(prodId).orElseThrow(() -> new NoSuchElementException("No such Product"));
 
