@@ -48,7 +48,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // note : all this header.payload.signature is done before this point we are just splitting and verifying them
             // all this comment so that i can remember header is appearing twice and both are different ones
 
-            String username = authUtil.getUsernameFronToken(token);
+            String username = authUtil.getUsernameFromToken(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 User user = userRepository.findByUsername(username).orElseThrow();
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken

@@ -20,7 +20,18 @@ public class User{
 
     private String password;
 
+    private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
     public Long getId(){return id;}
+
+    public String getProviderId(){return providerId;}
+    public void setProviderId(String providerId){this.providerId = providerId;}
+
+    public Provider getProvider(){return provider;}
+    public void setProvider(Provider provider){this.provider = provider;}
 
     public String getUsername(){return username;}
     public void setUsername(String username){this.username = username;}

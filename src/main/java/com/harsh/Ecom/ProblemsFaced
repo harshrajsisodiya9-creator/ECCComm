@@ -1,0 +1,43 @@
+Circular references in bean creation
+
+As spring starts application it starts with the creation of beans and populating the application context
+First security beans are created then later on controller and services beans are created
+Spring doesn't care about runtime call order at startup
+Spring only cares about which beans needs which beans to be constructed so
+
+While im writing the code for oAuth2 the webSecurityConfig calls successHandler which
+then requires authService, which in turn requires authenticationManager which is a bean in webSecurityConfig
+this causes a circular referencing while bean creation
+
+this is a violation of layered architecture
+Spring security assumes authentication flows are handled by filters and handlers
+while authentication logic belongs to services
+Security components are initialized very early in the application lifecycle.
+If a security bean depends on a concrete service:
+Spring must instantiate the service prematurely
+This can trigger transitive dependencies (repositories, encoders, other configs)
+Leading to circular dependencies or partial initialization
+
+Fix:
+1.}  Instead of directly coupling AuthService into SuccessHandler have a interface which is then implemented by authService
+An interface acts as a boundary contract, allowing:
+Infrastructure to invoke application behavior
+Without owning application implementation details
+
+2.}  Also keeping the loginHandler differently from the authService as its(authService) mostly logic is to handle business logic not security logic
+although some of it converges/look like security logic mostly it is to save the user into database(User provisioning)
+
+while the loginHandler(named loginService in this case) is handling the security related things in here thats why its separated from the other things from authService
+
+OAuth2logic is also in authService because the user is mostly authenticated from spring security,oAuth2SuccessHandler and in authService
+mostly email extraction, finding and/or creating of user, assign roles is happening
+
+FINAL FIIIXXXXX:
+A circular dependency was introduced because WebSecurityConfig defined a PasswordEncoder bean that was
+required by AuthService, while WebSecurityConfig itself depended on OAuth2SuccessHandler, which depended on
+AuthService. This caused a configuration–service–configuration cycle during application context
+initialization.
+The issue was resolved by taking PasswordEncoder bean into a separate
+configuration class, thereby enforcing proper layering between security configuration and application
+ services.
+ NEW CRYPTOCONFIG CLASS made
