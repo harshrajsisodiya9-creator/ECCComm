@@ -1,5 +1,6 @@
 package com.harsh.Ecom.Security;
 
+import com.harsh.Ecom.Model.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +35,9 @@ public class WebSecurityConfig {
                         httpSecuritySessionManagementConfigurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/set/**").hasRole("ADMIN")                    // all these are the endpoints which are provided by me to the application
-                        .requestMatchers("/auth/**").permitAll()                        //so any framework endpoints(/login which is there in oAuth2) will not be affected by these
+                        .requestMatchers("/set/**").hasAnyRole(Role.ADMIN.name(),Role.SELLER.name())// all these are the endpoints which are provided by me to the application
+                                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                                .requestMatchers("/auth/**").permitAll()                        //so any framework endpoints(/login which is there in oAuth2) will not be affected by these
                         .requestMatchers("/product/**").authenticated()                 // even if i write .anyRequest.authenticated(); (which only works with my created endpoints)
                       //. anyRequest().authenticated();
                 )

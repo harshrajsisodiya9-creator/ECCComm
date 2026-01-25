@@ -2,6 +2,7 @@ package com.harsh.Ecom.Controller;
 
 import com.harsh.Ecom.DTO.LoginRequestDto;
 import com.harsh.Ecom.DTO.LoginResponseDto;
+import com.harsh.Ecom.DTO.SignUpRequestDto;
 import com.harsh.Ecom.Security.AuthService;
 import com.harsh.Ecom.Security.LoginService;
 import lombok.AllArgsConstructor;
@@ -34,9 +35,9 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody LoginRequestDto loginRequestDto){
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto signUpRequestDto){
         try{
-            return ResponseEntity.ok(authService.signup(loginRequestDto));
+            return ResponseEntity.ok(authService.signup(signUpRequestDto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

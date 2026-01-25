@@ -1,11 +1,8 @@
 package com.harsh.Ecom.Model;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
@@ -15,7 +12,7 @@ public class User{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(unique = true)
+    @Column(unique = true)
     private String username;
 
     private String password;
@@ -24,6 +21,23 @@ public class User{
 
     @Enumerated(EnumType.STRING)
     private Provider provider;
+
+    // by default fetch type is lazy, change it to eager,
+    //EAGER is required because security needs roles immediately
+    @ElementCollection(fetch = FetchType.EAGER)                // JPA stores a separate table with foreign key to parent entity, no primary key entity identity
+    @Enumerated(EnumType.STRING)
+    private Set<Role> role = new HashSet<>();
+
+    public User(){};
+
+    public Set<Role> getRole() {
+        return role;
+    }
+
+    // Domain method – THIS is how roles should be added
+    public void addRole(Role role) {
+        this.role.add(role);
+    }
 
     public Long getId(){return id;}
 

@@ -12,5 +12,7 @@ public interface LoginMapper {
     @Mapping(source = "id", target = "userId")
     LoginResponseDto toResponse(User user);
 
+    User toUserFromSignUpRequest(SignUpRequestDto signUpRequestDto);
+
     User toUser(LoginRequestDto dto);
 }

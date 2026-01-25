@@ -1,10 +1,9 @@
 package com.harsh.Ecom.Repo;
 
-import com.harsh.Ecom.Model.Customer;
+import com.harsh.Ecom.Model.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepo extends JpaRepository<Customer, Long> {
-
+public interface SellerRepo extends JpaRepository<Seller, Long> {
 }
