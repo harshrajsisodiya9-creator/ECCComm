@@ -1,5 +1,6 @@
 package com.harsh.Ecom.Service;
 
+import com.harsh.Ecom.DTO.SellerDto.SellerMapper;
 import com.harsh.Ecom.DTO.SellerDto.SellerRequestDto;
 import com.harsh.Ecom.DTO.SellerDto.SellerResponseDto;
 import com.harsh.Ecom.Model.Role;
@@ -19,9 +20,10 @@ public class AdminService {
     private final UserRepository userRepository;
     private final SellerRepo sellerRepo;
     private final CustomerRepo customerRepo;
+    private final SellerMapper sellerMapper;
 
     @Transactional
-    public void onBoardSeller(SellerRequestDto sellerRequestDto){
+    public SellerResponseDto onBoardSeller(SellerRequestDto sellerRequestDto){
         User user = userRepository.findById(sellerRequestDto.getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
         if(sellerRepo.existsById(user.getId())){
@@ -37,7 +39,8 @@ public class AdminService {
                 .build();
 
         sellerRepo.save(seller);
-
         customerRepo.deleteById(user.getId());
+
+        return sellerMapper.toResponse(seller);
     }
 }

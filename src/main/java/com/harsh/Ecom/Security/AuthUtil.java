@@ -60,7 +60,7 @@ public class AuthUtil {
 
     public String generateAccessToken(User user){
         List<String> rolesss = user.getRole().stream().
-                map(role -> "Role_" + role.name())      // role.name() is the to way to get the ENUM
+                map(role -> "ROLE_" + role.name())      // role.name() is the to way to get the ENUM
                 .toList();                                      // ["ROLE_ADMIN","ROLE_CUSTOMER"]
 
         return Jwts.builder()

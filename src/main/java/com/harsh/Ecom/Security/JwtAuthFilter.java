@@ -54,11 +54,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             String username = authUtil.getUsernameFromToken(token);
             Collection<? extends GrantedAuthority> authorities = authUtil.getAuthorities(token);
+            log.info("inside JWT : {}", authorities.toString());
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 User user = userRepository.findByUsername(username).orElseThrow();
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                         = new UsernamePasswordAuthenticationToken(user, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                // log.info(SecurityContextHolder.getContext().getAuthentication().toString());
             }
             filterChain.doFilter(request, response);            // continue in the filter chain
         } catch (Exception e) {

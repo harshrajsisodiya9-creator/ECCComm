@@ -5,6 +5,7 @@ import com.harsh.Ecom.DTO.LoginResponseDto;
 import com.harsh.Ecom.Model.User;
 import com.harsh.Ecom.Repo.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class LoginService {
 
@@ -26,7 +28,7 @@ public class LoginService {
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(),loginRequestDto.getPassword())
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
+        log.info(userDetails.getAuthorities().toString());
         // typecasting (UserDetails) explicitly here cause getPrincipal just returns a generic object
         //Username/password	    UserDetails
         //OAuth2	            OAuth2User
