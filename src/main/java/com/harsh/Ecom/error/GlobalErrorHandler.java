@@ -21,6 +21,12 @@ public class GlobalErrorHandler {
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> handleConflict(Exception e){
+        ApiError apiError = new ApiError(e.getMessage(),HttpStatus.CONFLICT);
+        return new ResponseEntity<>(apiError,apiError.getStatusCode());
+    }
+
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ApiError> jwtExceptionHandler(Exception e){
         ApiError apiError = new ApiError("Invalid JWT token "+ e.getMessage(), HttpStatus.UNAUTHORIZED);

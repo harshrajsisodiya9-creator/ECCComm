@@ -9,8 +9,10 @@ import com.harsh.Ecom.Model.User;
 import com.harsh.Ecom.Repo.CustomerRepo;
 import com.harsh.Ecom.Repo.SellerRepo;
 import com.harsh.Ecom.Repo.UserRepository;
+import com.harsh.Ecom.error.ConflictException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,10 +26,10 @@ public class AdminService {
 
     @Transactional
     public SellerResponseDto onBoardSeller(SellerRequestDto sellerRequestDto){
-        User user = userRepository.findById(sellerRequestDto.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(sellerRequestDto.getId()).orElseThrow(() -> new UsernameNotFoundException(sellerRequestDto.getId().toString()));  // Global Exception Handler
 
         if(sellerRepo.existsById(user.getId())){
-            throw new IllegalArgumentException("Already a Seller");
+            throw new ConflictException("Seller Already Exist"); // Global Exception Handler
         }
 
         user.getRole().add(Role.SELLER);
