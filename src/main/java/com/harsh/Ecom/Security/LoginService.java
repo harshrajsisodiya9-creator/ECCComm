@@ -28,7 +28,6 @@ public class LoginService {
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getUsername(),loginRequestDto.getPassword())
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.info(userDetails.getAuthorities().toString());
         // typecasting (UserDetails) explicitly here cause getPrincipal just returns a generic object
         //Username/password	    UserDetails
         //OAuth2	            OAuth2User
