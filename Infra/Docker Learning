@@ -1,0 +1,23 @@
+Docckkkkkeeerrrrrrr
+
+So what problem docker solves is that it creates a environment independent container which
+solves the problem of the general saying that the code worked on my local machine
+
+Docker creates an image which has all the environment dependencies such as Runtime(JDK, python, node etc), our own application, user-space OS dependencies(/bin,/lib,/user)
+so when the image creation takes place docker uses Linux kernel from WSL2 (windows subsystem for linux) while when the container runs on linux it uses the linux kernel that's why:
+Docker images package user-space OS dependencies, not the kernel. The kernel always comes from the host (or a Linux VM).
+
+Docker uses Linux Kernel for its working
+
+Image : Contains our frozen application, user-space OS dependencies, Runtime
+Container : The running instance of image which runs on the host-OS
+
+Difference between VM and container:
+We require multiple VM's when different OS's are involved to run different applications so it takes more resources from the Host OS
+While containers are lightweight independent of Host OS kernel and runs on the shared Host OS kernel we can run multiple containerized applications on docker->HostOS->Infrastructure
+
+Sure we can also run containers on VM's
+
+Volume/Volumes are the data storages where containers store there data so even if a container is deleted or restarted we don't lose the data but if the volume is deleted we lose the data
+also we could use volume to read/write data between different containers (for ex: backend container -> database container)
+
