@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-@Component
 @Entity
 public class Product implements Serializable {
 
@@ -17,11 +16,9 @@ public class Product implements Serializable {
     private int prodPrice;
     private String prodName;
 
-    private String imageName;
-    private String imageType;
-
-    @Lob
-    private byte[] imageData;
+    private String objectName;
+    private Long objectSize;
+    private String bucketName;
 
     public Product(){};
 
@@ -40,27 +37,27 @@ public class Product implements Serializable {
     public String getProdName() { return prodName; }
     public void setProdName(String prodName) { this.prodName = prodName; }
 
-    public void setImageName(String originalFilename) {
-        this.imageName = originalFilename;
+    public String getObjectName() {
+        return objectName;
     }
 
-    public void setImageType(String fileType){
-        this.imageType = fileType;
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
     }
 
-    public void setImageData(byte[] imageData){
-            this.imageData = imageData;               // Note: this.imageData is pointing towards imageData; i.e arrays whether int or byt or char are just pointing towards object in the memory pool
+    public Long getObjectSize() {
+        return objectSize;
     }
 
-    public byte[] getImageData() {
-        return imageData;
+    public void setObjectSize(Long objectSize) {
+        this.objectSize = objectSize;
     }
 
-    public String getImageType() {
-        return imageType;
+    public String getBucketName() {
+        return bucketName;
     }
 
-    public String getImageName(){
-        return imageName;
+    public void setBucketName(String bucketName) {
+        this.bucketName = bucketName;
     }
 }

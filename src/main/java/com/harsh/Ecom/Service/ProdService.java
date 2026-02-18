@@ -27,29 +27,31 @@ public class ProdService {
     private ProdRepo repo;
 
     private final ModelMapper modelMapper;
+    private final MinioService minioService;
 
-    public ProdService(ModelMapper modelMapper, ProdMapper mapper) {
+    public ProdService(ModelMapper modelMapper, ProdMapper mapper, MinioService minioService) {
         this.modelMapper = modelMapper;
         this.mapper = mapper;
+        this.minioService = minioService;
     }         // constructor injection can be avoided if we use @RequiredArgsConstructor from lombok
 
-    public List<ProdDto> getProducts(){
-        List<Product> prods = repo.findAll();
-        return prods
-                .stream()
-                .map(prod -> modelMapper.map(prod, ProdDto.class))          // we write ProdDTO.class and not ProdDTo or prod.class too because
-                .toList();                                                          // prod is already a object of the product class so its already an instance of the product class
-                                                                                    // but ProductDto is not initialized(new ProdDto()) so we need to provide modelMapper with a blueprint
-                                                                                    // it needs to know which object need to be created from which class and copy fields from the source to destination
-    }                                                                               // if already created object instance is there then no problem we can write proddto without the .class thingi
-
+//    public List<ProdDto> getProducts(){
+//        List<Product> prods = repo.findAll();        // commenting this one out cause itne product laane mein database ki watt lag jaegi
+//        return prods
+//                .stream()
+//                .map(prod -> modelMapper.map(prod, ProdDto.class))          // we write ProdDTO.class and not ProdDTo or prod.class too because
+//                .toList();                                                          // prod is already a object of the product class so its already an instance of the product class
+//                                                                                    // but ProductDto is not initialized(new ProdDto()) so we need to provide modelMapper with a blueprint
+//                                                                                    // it needs to know which object need to be created from which class and copy fields from the source to destination
+//    }                                                                               // if already created object instance is there then no problem we can write proddto without the .class thingi
     // .map() requires a function(lambda) as a expression not an object so we provide with a lambda expression(a simplified version of function)
     // cant write .map(modelMapper.map(prod,ProdDTO.class)) because modelMapper.map() returns a ProdDTO object not a function expression.
 
     @Cacheable(value=cache_name, key = "#prodId")
     public ProdDto getProduct(int prodId){
         Product prod = repo.findById(prodId).orElseThrow(()-> new EntityNotFoundException("Product not found"));
-        return modelMapper.map(prod, ProdDto.class);
+        ProdDto dto = modelMapper.map(prod, ProdDto.class);
+        return dto;
     }
 
     @Cacheable(value = cache_name, key ="#prodName")
@@ -70,11 +72,11 @@ public class ProdService {
     public ProdDto addProduct(ProdResponseDto prodResponseDto, MultipartFile imageFile) throws IOException {
 
         Product prod = mapper.toEntity(prodResponseDto);
-        System.out.println(prod.getProdPrice());
         if(imageFile!= null && !imageFile.isEmpty()){
-            prod.setImageName(imageFile.getOriginalFilename());
-            prod.setImageType(imageFile.getContentType());
-            prod.setImageData(imageFile.getBytes());
+            String objectName = minioService.putImage(imageFile);
+            prod.setBucketName("product-images");
+            prod.setObjectName(objectName);
+            prod.setObjectSize(imageFile.getSize());
         }                                                    // idhar image save hui hai object(prod) ki field mein
         Product prod1 = repo.save(prod);
         return mapper.toDto(prod1);                                                     // idhar vo image aur prod ki baki fields object(prod) se pakad ke database mein update ki ja rhi hai
@@ -86,9 +88,12 @@ public class ProdService {
         Product newProd = repo.findById(prodId).orElseThrow(() -> new NoSuchElementException("Product not found"));
 
         if(imageFile != null && !imageFile.isEmpty()){
-            newProd.setImageData(imageFile.getBytes());
-            newProd.setImageName(imageFile.getOriginalFilename());
-            newProd.setImageType(imageFile.getContentType());
+            minioService.putImage(imageFile);
+            if(newProd.getObjectName() != null){
+            minioService.removeImage(newProd.getObjectName());}
+        }
+        if((imageFile.isEmpty() || imageFile == null) && newProd.getObjectName() != null){
+            minioService.removeImage(newProd.getObjectName());
         }
         Product prod1 = repo.save(mapper.toEntity(prod));
         return mapper.toDto(prod1);
@@ -96,7 +101,10 @@ public class ProdService {
 
     @CacheEvict(cacheNames = cache_name, key = "#prodId")
     public void deleteProd(int prodId){
-        repo.findById(prodId).orElseThrow(()-> new NoSuchElementException("Product not found"));
+        Product prod = repo.findById(prodId).orElseThrow(()-> new NoSuchElementException("Product not found"));
+        if(prod.getObjectName() != null){
+            minioService.removeImage(prod.getObjectName());
+        }
         repo.deleteById(prodId);
     }
 
@@ -110,7 +118,10 @@ public class ProdService {
 
     @CacheEvict(cacheNames = cache_name, key = "#prodName")
     public void deleteProds(String prodName){
-        repo.findByProdName(prodName).orElseThrow(() -> new NoSuchElementException("No product"));
+        Product prod1 = repo.findByProdName(prodName).orElseThrow(() -> new NoSuchElementException("No product"));
+        if(prod1.getObjectName() != null){
+            minioService.removeImage(prod1.getObjectName());
+        }
         repo.deleteByProdName(prodName);
     }
 
@@ -123,9 +134,12 @@ public class ProdService {
         }
 
         if(!imageFile.isEmpty() && imageFile != null){
-            prod1.setImageData(imageFile.getBytes());
-            prod1.setImageName(imageFile.getOriginalFilename());
-            prod1.setImageType(imageFile.getContentType());
+            String objectName = minioService.putImage(imageFile);
+            if(prod1.getObjectName() != null){
+                minioService.removeImage(prod1.getObjectName());
+            }
+            prod1.setObjectName(objectName);
+            prod1.setObjectSize(imageFile.getSize());
         }
         return mapper.toDto(repo.save(prod1));
     }

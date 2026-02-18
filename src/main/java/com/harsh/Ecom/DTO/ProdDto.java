@@ -13,9 +13,9 @@ public class ProdDto implements Serializable {
     private int price;
     private String name;
 
-    private String imageName;
-    private String imageType;
-    private byte[] imageData;
+    private String objectName;
+    private Long objectSize;
+    private String url;
 
     public ProdDto(){};
 
@@ -34,27 +34,25 @@ public class ProdDto implements Serializable {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public void setImageName(String originalFilename) {
-        this.imageName = originalFilename;
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
+    public String getObjectName(){
+        return objectName;
     }
 
-    public void setImageType(String fileType){
-        this.imageType = fileType;
+    public Long getobjectSize() {
+        return objectSize;
+    }
+    public void setobjectSize(Long objectSize) {
+        this.objectSize = objectSize;
     }
 
-    public void setImageData(byte[] imageData){
-        this.imageData = imageData;
+    public String getUrl() {
+        return url;
     }
 
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public String getImageType() {
-        return imageType;
-    }
-
-    public String getImageName(){
-        return imageName;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
