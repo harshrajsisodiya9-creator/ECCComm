@@ -38,10 +38,8 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
         try{
-            System.out.println("SIGNUP CONTROLLER EXECUTED");
             return ResponseEntity.ok(authService.signup(signUpRequestDto));
         } catch (Exception e) {
-            System.out.println("SIGNUP CONTROLLER Error Body");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
