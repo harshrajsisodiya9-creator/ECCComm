@@ -18,11 +18,11 @@ public class ProdController {
 
     @Autowired
     private ProdService service;
-
-    @GetMapping("/all")
-    public List<ProdDto> getProds(){
-        return service.getProducts();
-    }
+//
+//    @GetMapping("/all")
+//    public List<ProdDto> getProds(){
+//        return service.getProducts();
+//    }
 
     @GetMapping("id/{prodId}")
     public ResponseEntity<ProdDto> getProduct(@PathVariable int prodId){
@@ -47,13 +47,12 @@ public class ProdController {
     }
 
     @GetMapping("/{prodId}/image")
-    public ResponseEntity<byte[]> getImage(@PathVariable int prodId){
+    public ResponseEntity<String> getImage(@PathVariable int prodId){
         ProdDto prod = service.getProduct(prodId);
-        byte[] imageFile = prod.getImageData();
+        String imageurl = prod.getUrl();
 
         return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(prod.getImageType()))
-                .body(imageFile);                                      // new method of returning responseEntity.ok() (static factory method)        both methods are doing same thing no difference in response time/memory taken
+                .body(imageurl);                                      // new method of returning responseEntity.ok() (static factory method)        both methods are doing same thing no difference in response time/memory taken
                                                                        // old one/legacy style was returning like this: return new ResponseEntity<>() (creating a new instance)
     }
 }

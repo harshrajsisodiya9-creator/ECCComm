@@ -51,6 +51,11 @@ public class ProdService {
     public ProdDto getProduct(int prodId){
         Product prod = repo.findById(prodId).orElseThrow(()-> new EntityNotFoundException("Product not found"));
         ProdDto dto = modelMapper.map(prod, ProdDto.class);
+        if(prod.getObjectName() != null) {
+
+            String url = minioService.urlProvider(prod.getObjectName());
+            dto.setUrl(url);
+        }
         return dto;
     }
 
@@ -62,7 +67,15 @@ public class ProdService {
        }
        return prod
                .stream()
-               .map(mapper::toDto)              //prods -> mapper.toDto(prods)
+//               .map(mapper::toDto)              //prods -> mapper.toDto(prods)
+               .map(prods ->
+               {
+                   ProdDto dto = mapper.toDto(prods);
+                   if(prods.getObjectName() != null) {
+                       dto.setUrl(minioService.urlProvider(prods.getObjectName()));
+                   }
+                   return dto;
+               })
                .toList();
     }
 

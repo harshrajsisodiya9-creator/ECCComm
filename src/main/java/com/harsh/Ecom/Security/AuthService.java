@@ -25,6 +25,7 @@ public class AuthService implements OAuth2Handler{
     private final AuthUtil authUtil;
     private final PasswordEncoder encoder;
 
+    @Transactional
     public User signupInternal(SignUpRequestDto signUpRequestDto, Provider provider, String providerId){
         User user = userRepository.findByUsername(signUpRequestDto.getUsername()).orElse(null);
         // we don't need an already used username hence we throw a null, if there is already a username then we have a problem

@@ -1,6 +1,7 @@
 package com.harsh.Ecom.Security;
 
 import com.harsh.Ecom.Model.Role;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +39,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/set/**").hasAnyRole(Role.ADMIN.name(),Role.SELLER.name())// all these are the endpoints which are provided by me to the application
                                 .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers("/auth/**").permitAll()                        //so any framework endpoints(/login which is there in oAuth2) will not be affected by these
-                        .requestMatchers("/product/**").authenticated()                 // even if i write .anyRequest.authenticated(); (which only works with my created endpoints)
-                      //. anyRequest().authenticated();
+                        .requestMatchers("/product/**").authenticated()                 // even if I write .anyRequest.authenticated(); (which only works with my created endpoints)
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)            // ↓
                 .oauth2Login(oAuth2 -> oAuth2.failureHandler(      // this will create a login page /login
@@ -48,8 +49,19 @@ public class WebSecurityConfig {
                         }
                         )
                         .successHandler(oAuth2SuccessHandler)
+                )
+                .formLogin(form -> form.disable())
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/JSON");
+                            response.getWriter()
+                                    .write("{\"error\":\"Forbidden\"}");
+                        })
+
                 );
-//                .formLogin(Customizer.withDefaults());
+
+
         return httpSecurity.build();
     }
 }

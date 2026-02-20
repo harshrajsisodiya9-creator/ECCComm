@@ -5,6 +5,7 @@ import com.harsh.Ecom.DTO.LoginResponseDto;
 import com.harsh.Ecom.DTO.SignUpRequestDto;
 import com.harsh.Ecom.Security.AuthService;
 import com.harsh.Ecom.Security.LoginService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +36,12 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto signUpRequestDto){
+    public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto){
         try{
+            System.out.println("SIGNUP CONTROLLER EXECUTED");
             return ResponseEntity.ok(authService.signup(signUpRequestDto));
         } catch (Exception e) {
+            System.out.println("SIGNUP CONTROLLER Error Body");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }

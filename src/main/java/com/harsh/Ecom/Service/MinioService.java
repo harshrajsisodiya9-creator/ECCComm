@@ -2,6 +2,7 @@ package com.harsh.Ecom.Service;
 
 import io.minio.*;
 import io.minio.errors.*;
+import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ public class MinioService {
     public String urlProvider(String objectName){
         try {
             return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
                             .bucket("product-images")
                             .object(objectName)
                             .expiry(5, TimeUnit.MINUTES)
