@@ -29,13 +29,13 @@ public class UserDetailService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User         // using full package name as we have already colliding name User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .authorities(Collections.emptyList())
+                .authorities(mapRoleToAuthorities(user.getRole()))
                 .build();                                              // this will return user which is the class of spring security not
     }                                                                  // not our own class
 
     public Collection<? extends GrantedAuthority> mapRoleToAuthorities(Set<Role> roles){
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("Role_" + role)) // writing Role_Customer etc to the DB as Role_ * String  so thats why this type of syntax
+                .map(role -> new SimpleGrantedAuthority("ROLE" + role)) // writing Role_Customer etc to the DB as Role_ * String  so thats why this type of syntax
                 .toList();                                                              // Role enum → ROLE_* string in DB
     }
 }
